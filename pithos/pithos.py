@@ -418,65 +418,89 @@ class PithosWindow(Gtk.ApplicationWindow):
         self.stations_popover.search.connect('activate', self.search_activate_handler)
 
     def init_actions(self, app):
-        action = Gio.SimpleAction.new('playpause', None)
-        self.add_action(action)
-        app.add_accelerator('space', 'win.playpause', None)
-        action.connect('activate', self.user_playpause)
+        # Shortcuts can be disabled by putting their keyword in the
+        # PITHOS_DISABLE_SHORTCUTS environment variable.
+        # This allows advanced users to disable shortcuts they dislike.
+        # "ALL" disables all shortcuts.
 
-        action = Gio.SimpleAction.new('playselected', None)
-        self.add_action(action)
-        app.add_accelerator('Return', 'win.playselected', None)
-        action.connect('activate', self.start_selected_song)
+        disable_shortcuts = os.getenv("PITHOS_DISABLE_SHORTCUTS")
+        if disable_shortcuts == None:
+            disable_shortcuts = ''
+        else:
+            disable_shortcuts = disable_shortcuts.upper()
+        
+        if not "ALL" in disable_shortcuts:
+            if not "PLAYPAUSE" in disable_shortcuts:
+                action = Gio.SimpleAction.new('playpause', None)
+                self.add_action(action)
+                app.add_accelerator('space', 'win.playpause', None)
+                action.connect('activate', self.user_playpause)
 
-        action = Gio.SimpleAction.new('songinfo', None)
-        self.add_action(action)
-        app.add_accelerator('<Primary>i', 'win.songinfo', None)
-        action.connect('activate', self.info_song)
+            if not "PLAYSELECTED" in disable_shortcuts:
+                action = Gio.SimpleAction.new('playselected', None)
+                self.add_action(action)
+                app.add_accelerator('Return', 'win.playselected', None)
+                action.connect('activate', self.start_selected_song)
 
-        action = Gio.SimpleAction.new('volumeup', None)
-        self.add_action(action)
-        app.add_accelerator('<Primary>Up', 'win.volumeup', None)
-        action.connect('activate', self.volume_up)
+            if not "SONGINFO" in disable_shortcuts:
+                action = Gio.SimpleAction.new('songinfo', None)
+                self.add_action(action)
+                app.add_accelerator('<Primary>i', 'win.songinfo', None)
+                action.connect('activate', self.info_song)
 
-        action = Gio.SimpleAction.new('volumedown', None)
-        self.add_action(action)
-        app.add_accelerator('<Primary>Down', 'win.volumedown', None)
-        action.connect('activate', self.volume_down)
+            if not "VOLUMEUP" in disable_shortcuts:
+                action = Gio.SimpleAction.new('volumeup', None)
+                self.add_action(action)
+                app.add_accelerator('<Primary>Up', 'win.volumeup', None)
+                action.connect('activate', self.volume_up)
 
-        action = Gio.SimpleAction.new('skip', None)
-        self.add_action(action)
-        app.add_accelerator('<Primary>Right', 'win.skip', None)
-        action.connect('activate', self.next_song)
+            if not "VOLUMEDOWN" in disable_shortcuts:
+                action = Gio.SimpleAction.new('volumedown', None)
+                self.add_action(action)
+                app.add_accelerator('<Primary>Down', 'win.volumedown', None)
+                action.connect('activate', self.volume_down)
 
-        action = Gio.SimpleAction.new('love', None)
-        self.add_action(action)
-        app.add_accelerator('<Primary>l', 'win.love', None)
-        action.connect('activate', self.love_song)
+            if not "SKIP" in disable_shortcuts:
+                action = Gio.SimpleAction.new('skip', None)
+                self.add_action(action)
+                app.add_accelerator('<Primary>Right', 'win.skip', None)
+                action.connect('activate', self.next_song)
 
-        action = Gio.SimpleAction.new('ban', None)
-        self.add_action(action)
-        app.add_accelerator('<Primary>b', 'win.ban', None)
-        action.connect('activate', self.ban_song)
+            if not "LOVE" in disable_shortcuts:
+                action = Gio.SimpleAction.new('love', None)
+                self.add_action(action)
+                app.add_accelerator('<Primary>l', 'win.love', None)
+                action.connect('activate', self.love_song)
 
-        action = Gio.SimpleAction.new('tired', None)
-        self.add_action(action)
-        app.add_accelerator('<Primary>t', 'win.tired', None)
-        action.connect('activate', self.tired_song)
+            if not "BAN" in disable_shortcuts:
+                action = Gio.SimpleAction.new('ban', None)
+                self.add_action(action)
+                app.add_accelerator('<Primary>b', 'win.ban', None)
+                action.connect('activate', self.ban_song)
 
-        action = Gio.SimpleAction.new('unrate', None)
-        self.add_action(action)
-        app.add_accelerator('<Primary>u', 'win.unrate', None)
-        action.connect('activate', self.unrate_song)
+            if not "TIRED" in disable_shortcuts:
+                action = Gio.SimpleAction.new('tired', None)
+                self.add_action(action)
+                app.add_accelerator('<Primary>t', 'win.tired', None)
+                action.connect('activate', self.tired_song)
 
-        action = Gio.SimpleAction.new('bookmark', None)
-        self.add_action(action)
-        app.add_accelerator('<Primary>d', 'win.bookmark', None)
-        action.connect('activate', self.bookmark_song)
+            if not "UNRATE" in disable_shortcuts:
+                action = Gio.SimpleAction.new('unrate', None)
+                self.add_action(action)
+                app.add_accelerator('<Primary>u', 'win.unrate', None)
+                action.connect('activate', self.unrate_song)
 
-        action = Gio.SimpleAction.new('toggle-station-popover', None)
-        self.add_action(action)
-        app.add_accelerator('<Primary>r', 'win.toggle-station-popover', None)
-        action.connect('activate', self.stations_popover.toggle_visibility)
+            if not "BOOKMARK" in disable_shortcuts:
+                action = Gio.SimpleAction.new('bookmark', None)
+                self.add_action(action)
+                app.add_accelerator('<Primary>d', 'win.bookmark', None)
+                action.connect('activate', self.bookmark_song)
+
+            if not "TOGGLE_STATION_POPOVER" in disable_shortcuts:
+                action = Gio.SimpleAction.new('toggle-station-popover', None)
+                self.add_action(action)
+                app.add_accelerator('<Primary>r', 'win.toggle-station-popover', None)
+                action.connect('activate', self.stations_popover.toggle_visibility)
 
     def worker_run(self, fn, args=(), callback=None, message=None, context='net', errorback=None, user_data=None):
         if context and message:
